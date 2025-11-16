@@ -7,12 +7,12 @@
 - **端口监听**：5003 端口正常监听
 - **API响应**：HTTP 200 状态码
 - **语音合成**：Azure TTS 连接正常
-- **访问令牌**：azure-tts-2024（匹配）
+- **访问令牌**：your-api-token（匹配）
 
 ### ✅ 插件配置
 - **插件文件**：`plugins/azure_tts_plugin.json` 
 - **服务器URL**：`http://127.0.0.1:5003/api/tts`
-- **访问令牌**：azure-tts-2024
+- **访问令牌**：your-api-token
 - **语音列表**：xiaoxiao, xiaoyi, yunxi 等 14 个中文语音
 
 ## 🔍 可能的问题
@@ -65,7 +65,7 @@ curl http://localhost:5003/health
 
 # 2. 测试完整TTS API
 curl -s -o /dev/null -w "状态码: %{http_code}, 响应时间: %{time_total}s\n" \
-  "http://127.0.0.1:5003/api/tts?text=测试&voice=xiaoxiao&e=1.0&token=azure-tts-2024"
+  "http://127.0.0.1:5003/api/tts?text=测试&voice=xiaoxiao&e=1.0&token=your-api-token"
 
 # 3. 检查日志
 tail -f logs/server.log

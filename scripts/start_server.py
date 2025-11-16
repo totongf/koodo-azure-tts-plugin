@@ -29,7 +29,7 @@ def main():
     # 设置访问令牌（如果未设置）
     if not os.getenv('TTS_ACCESS_TOKEN'):
         print("警告: 未设置 TTS_ACCESS_TOKEN，使用默认值")
-        os.environ['TTS_ACCESS_TOKEN'] = 'azure-tts-2024'
+        os.environ['TTS_ACCESS_TOKEN'] = 'your-api-token'
     
     # 启动 Flask 应用
     app_path = project_root / "main" / "python" / "app.py"

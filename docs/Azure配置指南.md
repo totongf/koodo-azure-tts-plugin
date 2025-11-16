@@ -4,7 +4,7 @@
 
 ### ✅ 访问令牌匹配问题
 - **问题**：Flask 服务器默认令牌与 JavaScript 插件令牌不匹配
-- **解决**：统一使用 `azure-tts-2024` 作为访问令牌
+- **解决**：统一使用 `your-api-token` 作为访问令牌
 - **位置**：`main/python/app.py:24`
 
 ### ✅ 日志路径规范化
@@ -59,19 +59,20 @@ python app.py
 
 ### 配置方法
 
-**方法一：创建 .env 文件**
-```bash
-# 复制示例文件
-cp .env.example .env
+**设置系统环境变量**
 
-# 编辑 .env 文件，填入你的实际配置
-vim .env
-```
+项目直接使用系统环境变量进行配置，无需创建 .env 文件。设置方法如下：
 
-**方法二：设置系统环境变量**
+**Linux/macOS**：
 ```bash
 export SPEECH_KEY="your_actual_key"
 export SPEECH_REGION="your_actual_region"
+```
+
+**Windows**：
+```cmd
+set SPEECH_KEY="your_actual_key"
+set SPEECH_REGION="your_actual_region"
 ```
 
 ## 🧪 验证配置
@@ -82,7 +83,7 @@ export SPEECH_REGION="your_actual_region"
 curl http://localhost:5003/health
 
 # 测试语音合成
-curl "http://localhost:5003/api/tts?text=测试&voice=xiaoxiao&token=azure-tts-2024"
+curl "http://localhost:5003/api/tts?text=测试&voice=xiaoxiao&token=your-api-token"
 ```
 
 ### 4. 支持的语音
@@ -123,4 +124,5 @@ Azure语速 = 1.0 + (Koodo速度参数 / 100)
 
 - 确保 Azure 认知服务资源已正确创建并激活
 - 密钥和区域信息必须在 Azure Portal 中获取
-- 保持 .env 文件的安全性，不要提交到版本控制系统
+- 环境变量包含敏感信息，请勿提交到版本控制系统
+- 确保服务启动前已正确设置所有必要的环境变量

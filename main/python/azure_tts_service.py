@@ -101,21 +101,32 @@ class AzureTTSService:
                 audio_config=None
             )
             
-            # 转换语速因子为SSML百分比格式
-            # rate=1.0 -> 100%, rate=1.5 -> 150%, rate=0.8 -> 80%
-            rate_percent = int(rate * 100)
-            
-            # 构建 SSML，控制语速
+            # 构建 SSML，控制语速 - Azure TTS 支持直接使用小数作为语速因子
+            # rate=1.0 -> 正常语速, rate=0.5 -> 0.5倍速, rate=2.0 -> 2.0倍速
             ssml = f"""
             <speak version="1.0" xmlns="http://www.w3.org/2001/10/synthesis" xml:lang="zh-CN">
                 <voice name="{voice_name}">
-                    <prosody rate="{rate_percent}%">
+                    <prosody rate="{rate}">
                         {text}
                     </prosody>
                 </voice>
             </speak>
             """
-            
+
+            # 记录模拟的curl命令，方便调试
+            azure_endpoint = f"https://{self.speech_region}.tts.speech.microsoft.com/cognitiveservices/v1"
+            logging.info(f"Azure TTS 请求调试信息:")
+            logging.info(f"Endpoint: {azure_endpoint}")
+            logging.info(f"语音名称: {voice_name}")
+            logging.info(f"语速因子: {rate:.2f}")
+            logging.info(f"SSML 内容: {ssml.strip()}")
+            logging.info(f"模拟 curl 命令 (替换 {{SPEECH_KEY}} 为实际密钥):")
+            logging.info(f"curl -X POST \"{azure_endpoint}\" \\")
+            logging.info(f"  -H \"Ocp-Apim-Subscription-Key: {{SPEECH_KEY}}\" \\")
+            logging.info(f"  -H \"Content-Type: application/ssml+xml\" \\")
+            logging.info(f"  -H \"X-Microsoft-OutputFormat: riff-16khz-16bit-mono-pcm\" \\")
+            logging.info(f"  --data-ascii '{ssml.strip()}'")
+
             # 执行语音合成
             result = synthesizer.speak_ssml_async(ssml).get()
             

@@ -50,7 +50,7 @@ app = Flask(__name__)
 app.logger.setLevel(logging.INFO)
 
 # 固定访问令牌（从环境变量获取）
-ACCESS_TOKEN = os.getenv('TTS_ACCESS_TOKEN', 'azure-tts-2024')
+ACCESS_TOKEN = os.getenv('TTS_ACCESS_TOKEN', 'your-api-token')
 
 # 初始化 Azure TTS 服务
 try:
@@ -99,29 +99,46 @@ def health_check():
 def map_speed_to_rate(koodo_speed):
     """
     将Koodo速度参数映射为Azure TTS语速参数
-    映射公式: Azure语速 = 1.0 + (Koodo速度参数 / 100)
+    支持两套枚举值：
+    1. 第一套枚举值: -50,-25,0,25,50,75,100 → 按公式映射
+    2. 第二套枚举值: 0.5,0.75,1,1.25,1.5,1.75,2 → 直接使用对应值
+    不在范围内的参数都转为1.0
+    说明：
+    - Koodo速度参数=0 → 1.0倍速（100%，正常语速）
+    - Koodo速度参数=-50 → 0.5倍速（50%，减慢50%）
+    - Koodo速度参数=50 → 1.5倍速（150%，加快50%）
+    - Koodo速度参数=100 → 2.0倍速（200%，加快100%）
     """
     try:
         if koodo_speed is None or koodo_speed == '':
-            koodo_speed = 0
-        
-        koodo_speed = float(koodo_speed)
-        
-        if isNaN(koodo_speed):
-            app.logger.warning("Koodo 速度参数无效，使用默认值 0")
             return 1.0
-        
-        mapped_rate = 1.0 + (koodo_speed / 100)
-        final_rate = max(0.5, min(2.0, mapped_rate))
-        
-        if final_rate != mapped_rate:
-            app.logger.info(f"速度参数调整: Koodo={koodo_speed} -> Azure={mapped_rate:.2f} -> 最终={final_rate:.2f}")
-        else:
-            app.logger.info(f"速度参数映射: Koodo={koodo_speed} -> Azure={final_rate:.2f}")
-            
-        return final_rate
+
+        koodo_speed = float(koodo_speed)
+
+        if isNaN(koodo_speed):
+            app.logger.warning("Koodo 速度参数无效，使用默认值 1.0")
+            return 1.0
+
+        # 第二套枚举值：直接使用对应值
+        second_set = {0.5, 0.75, 1, 1.25, 1.5, 1.75, 2}
+        if koodo_speed in second_set:
+            app.logger.info(f"速度参数映射（第二套）: Koodo={koodo_speed:.2f} -> Azure={koodo_speed:.2f}")
+            return koodo_speed
+
+        # 第一套枚举值：按公式映射
+        first_set = {-50, -25, 0, 25, 50, 75, 100}
+        if koodo_speed in first_set:
+            mapped_rate = 1.0 + (koodo_speed / 100)
+            final_rate = max(0.5, min(2.0, mapped_rate))
+            app.logger.info(f"速度参数映射（第一套）: Koodo={koodo_speed:.2f} -> Azure={final_rate:.2f}")
+            return final_rate
+
+        # 不在范围内的参数都转为1.0
+        app.logger.warning(f"速度参数不在支持的枚举范围内: {koodo_speed:.2f}，使用默认值 1.0")
+        return 1.0
+
     except (ValueError, TypeError):
-        app.logger.warning(f"速度参数格式错误: {koodo_speed}，使用默认值 0")
+        app.logger.warning(f"速度参数格式错误: {koodo_speed}，使用默认值 1.0")
         return 1.0
 
 
@@ -153,7 +170,7 @@ def text_to_speech():
         # 将Koodo速度参数映射为Azure语速
         azure_rate = map_speed_to_rate(koodo_speed)
         
-        app.logger.info(f"处理 TTS 请求: text={text[:50]}..., voice={voice}, Koodo速度={koodo_speed}, Azure语速={azure_rate:.2f}")
+        app.logger.info(f"处理 TTS 请求: text={text[:50]}..., voice={voice}, 原始Koodo速度={koodo_speed}, 映射后Azure语速={azure_rate:.2f}")
         
         # 生成语音
         audio_data = tts_service.synthesize_speech(text, voice, azure_rate)

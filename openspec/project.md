@@ -71,6 +71,8 @@ Azure TTS 测试项目，专注于为 Koodo 创建 Azure TTS 版本的语音插�
 - 响应时间控制在可接受范围内
 - 支持并发请求处理
 - 资源使用优化，避免内存泄漏
+- Python环境管理：项目使用 uv 进行 Python 包管理和虚拟环境创建
+- 虚拟环境目录：项目使用 .venv 作为 Python 虚拟环境目录
 
 ## External Dependencies
 - Azure TTS 云服务

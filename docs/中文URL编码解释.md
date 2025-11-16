@@ -12,7 +12,7 @@
 const params = {
     text: "中文测试",          // 原始中文
     voice: "xiaoxiao", 
-    token: "azure-tts-2024"
+    token: "your-api-token"
 };
 
 // URL编码（使用 encodeURIComponent）
@@ -50,7 +50,7 @@ text=中文测试...        # 这是处理后的正确中文
 ### 手动测试URL编码
 ```bash
 # 发送URL编码的请求
-curl "http://127.0.0.1:5003/api/tts?text=%E4%B8%AD%E6%96%87%E6%B5%8B%E8%AF%95&voice=xiaoxiao&token=azure-tts-2024"
+curl "http://127.0.0.1:5003/api/tts?text=%E4%B8%AD%E6%96%87%E6%B5%8B%E8%AF%95&voice=xiaoxiao&token=your-api-token"
 
 # 查看结果
 ```

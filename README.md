@@ -1,6 +1,6 @@
 # koodo-azure-tts-plugin
 
-koodo-azure-tts-plugin 是一个兼容 Koodo 语音插件系统的 Azure 语音合成插件，提供高质量的语音合成服务。
+koodo-azure-tts-plugin 是一个兼容 [Koodo Reader](https://github.com/troyeguo/koodo-reader) 语音插件系统的 Azure 语音合成插件，提供高质量的语音合成服务。
 
 ## 功能特性
 
@@ -10,6 +10,7 @@ koodo-azure-tts-plugin 是一个兼容 Koodo 语音插件系统的 Azure 语音�
 - 🎵 **音频质量**：提供高保真音频输出
 - 📁 **多格式输出**：支持 WAV/MP3 等格式
 - 🔌 **Koodo 兼容**：无缝集成 Koodo 语音插件系统
+  - 测试版本：2.2.1
 
 ## 技术栈
 
@@ -30,44 +31,63 @@ koodo-azure-tts-plugin 是一个兼容 Koodo 语音插件系统的 Azure 语音�
 # JavaScript 依赖
 npm install
 
-# Python 依赖
-pip install -r requirements.txt
+# Python 依赖 - 使用 uv 包管理器
+uv install
+
+# 或者使用 uv pip 命令
+uv pip install -r requirements.txt
 ```
 
 ## 配置
 
-### 1. 获取 Azure 认知服务密钥
+### 获取 Azure 认知服务密钥
 
 前往 [Azure 门户](https://portal.azure.com/) 创建认知服务资源，获取以下信息：
-- `SPEECH_KEY`：语音服务密钥
-- `SPEECH_REGION`：服务区域（如：`eastasia`）
 
-### 2. 配置文件
+### 环境变量配置
 
-复制 `.env.example` 为 `.env` 并修改配置：
+项目使用环境变量直接管理配置参数，无需创建 `.env` 文件。设置以下环境变量：
 
+#### 核心配置（必须）
+- `SPEECH_KEY`：Azure 认知服务语音密钥
+- `SPEECH_REGION`：Azure 认知服务区域（如：`eastasia`）
+
+#### 服务器配置（仅 Python 服务，可选）
+- `PORT`：服务器监听端口，默认：`5003`
+- `DEBUG`：是否开启调试模式，默认：`False`
+
+#### 安全配置（可选）
+- `API_TOKEN`：API 访问令牌（用于身份验证），默认：`azure-tts-2024`
+
+### 环境变量设置方法
+
+**Linux/macOS**：
 ```bash
-cp .env.example .env
+export SPEECH_KEY=your_azure_speech_key_here
+export SPEECH_REGION=eastasia
+export API_TOKEN=your-api-token
 ```
 
-编辑 `.env` 文件：
-
-```env
-# Azure 认知服务语音密钥
-SPEECH_KEY=your_azure_speech_key_here
-
-# Azure 认知服务区域
-SPEECH_REGION=your_azure_region_here
-
-# 服务器配置（仅 Python 服务）
-PORT=5003
-DEBUG=False
-
-# API 访问令牌（用于身份验证）
-API_TOKEN=azure-tts-2024
+**Windows**：
+```cmd
+set SPEECH_KEY=your_azure_speech_key_here
+set SPEECH_REGION=eastasia
+set API_TOKEN=your-api-token
 ```
 
 ## 使用方法
+
+### Koodo 插件安装
+
+在 Koodo 中安装本插件，只需以下简单步骤：
+
+1. 打开 Koodo 应用
+2. 进入「设置」→「插件」页面
+3. 点击「添加插件」按钮
+4. 在弹出的对话框中，粘贴 `plugins/koodo_azure_tts_plugin.json` 文件中的 JSON 配置代码
+5. 点击「保存」按钮，完成插件安装
+
+JSON 配置文件路径：[plugins/koodo_azure_tts_plugin.json](plugins/koodo_azure_tts_plugin.json)
 
 ### JavaScript 插件（Koodo 集成）
 
@@ -99,7 +119,7 @@ python main/python/app.py
 
 ```bash
 curl -X POST http://localhost:5003/tts \
-  -H "Authorization: Bearer azure-tts-2024" \
+  -H "Authorization: Bearer your-api-token" \
   -H "Content-Type: application/json" \
   -d '{
     "text": "你好，这是 Azure TTS 语音合成示例",
@@ -122,8 +142,6 @@ curl -X POST http://localhost:5003/tts \
 ├── plugins/             # 插件分发目录
 ├── scripts/             # 辅助脚本
 ├── test/                # 测试代码
-├── .env                 # 配置文件
-├── .env.example         # 配置示例
 ├── .gitignore           # Git 忽略规则
 ├── package.json         # JavaScript 项目配置
 └── requirements.txt     # Python 依赖

@@ -4,7 +4,7 @@
 # 设置环境变量
 export SPEECH_KEY=***REMOVED***
 export SPEECH_REGION=eastasia
-export TTS_ACCESS_TOKEN=azure-tts-2024
+export TTS_ACCESS_TOKEN=your-api-token
 export PORT=5003
 
 # 启动服务器

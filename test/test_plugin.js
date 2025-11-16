@@ -22,7 +22,7 @@ async function testPlugin() {
         const config = {
             url: 'http://127.0.0.1:5003/api/tts',
             voice: 'xiaoxiao',
-            token: 'azure-tts-2024'
+            token: 'your-api-token'
         };
         
         // 调用插件函数

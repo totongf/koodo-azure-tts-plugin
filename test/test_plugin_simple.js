@@ -13,7 +13,7 @@ function getTTSAudio(text, rate, config) {
     return new Promise((resolve, reject) => {
         const url = config.url || "http://127.0.0.1:5003/api/tts";
         const voice = config.voice || "xiaoxiao";
-        const token = config.token || "azure-tts-2024";
+        const token = config.token || "your-api-token";
         
         // 构建查询参数
         const params = new URLSearchParams({
@@ -102,7 +102,7 @@ async function testPlugin() {
         const config = {
             url: 'http://127.0.0.1:5003/api/tts',
             voice: 'xiaoxiao',
-            token: 'azure-tts-2024'
+            token: 'your-api-token'
         };
         
         // 调用插件函数
