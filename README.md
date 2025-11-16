@@ -57,7 +57,7 @@ uv pip install -r requirements.txt
 - `DEBUG`：是否开启调试模式，默认：`False`
 
 #### 安全配置（可选）
-- `API_TOKEN`：API 访问令牌（用于身份验证），默认：`azure-tts-2024`
+- `API_TOKEN`：API 访问令牌（用于身份验证），默认：`your-api-token`
 
 ### 环境变量设置方法
 
