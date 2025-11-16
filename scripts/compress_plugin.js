@@ -54,7 +54,7 @@ function main() {
     const result = compressScript(scriptPath);
     
     // 保存压缩后的脚本
-    const outputPath = path.join(__dirname, '..', 'plugins', 'azure_tts_plugin_compressed.js');
+    const outputPath = path.join(__dirname, '..', 'plugins', 'koodo_azure_tts_plugin_compressed.js');
     fs.writeFileSync(outputPath, result.compressed);
     
     console.log('压缩脚本已保存到:', outputPath);

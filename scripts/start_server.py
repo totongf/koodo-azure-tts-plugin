@@ -16,7 +16,7 @@ def main():
     print("启动 Azure TTS 服务器...")
     
     # 检查环境变量
-    required_vars = ['SPEECH_KEY', 'SPEECH_REGION']
+    required_vars = ['SPEECH_KEY', 'SPEECH_REGION', 'TTS_ACCESS_TOKEN']
     missing_vars = [var for var in required_vars if not os.getenv(var)]
     
     if missing_vars:
@@ -25,11 +25,6 @@ def main():
         for var in missing_vars:
             print(f"  export {var}=your_value")
         sys.exit(1)
-    
-    # 设置访问令牌（如果未设置）
-    if not os.getenv('TTS_ACCESS_TOKEN'):
-        print("警告: 未设置 TTS_ACCESS_TOKEN，使用默认值")
-        os.environ['TTS_ACCESS_TOKEN'] = 'your-api-token'
     
     # 启动 Flask 应用
     app_path = project_root / "main" / "python" / "app.py"

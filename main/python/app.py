@@ -50,7 +50,9 @@ app = Flask(__name__)
 app.logger.setLevel(logging.INFO)
 
 # 固定访问令牌（从环境变量获取）
-ACCESS_TOKEN = os.getenv('TTS_ACCESS_TOKEN', 'your-api-token')
+ACCESS_TOKEN = os.getenv('TTS_ACCESS_TOKEN')
+if not ACCESS_TOKEN:
+    raise RuntimeError('环境变量 TTS_ACCESS_TOKEN 必须设置')
 
 # 初始化 Azure TTS 服务
 try:
@@ -65,7 +67,7 @@ def validate_token():
     """验证访问令牌"""
     token = request.args.get('token')
     if not token or token != ACCESS_TOKEN:
-        app.logger.warning(f"无效的访问令牌: {token}")
+        app.logger.warning("无效的访问令牌")
         return False
     return True
 
@@ -170,7 +172,14 @@ def text_to_speech():
         # 将Koodo速度参数映射为Azure语速
         azure_rate = map_speed_to_rate(koodo_speed)
         
-        app.logger.info(f"处理 TTS 请求: text={text[:50]}..., voice={voice}, 原始Koodo速度={koodo_speed}, 映射后Azure语速={azure_rate:.2f}")
+        text_length = len(text)
+        app.logger.info(
+            "处理 TTS 请求: voice=%s, 文本长度=%d, 原始Koodo速度=%s, 映射后Azure语速=%.2f",
+            voice,
+            text_length,
+            koodo_speed,
+            azure_rate,
+        )
         
         # 生成语音
         audio_data = tts_service.synthesize_speech(text, voice, azure_rate)

@@ -8,6 +8,12 @@
 # - TTS_ACCESS_TOKEN: API 访问令牌
 # - PORT: 服务器端口（默认 5003）
 
+# 启动服务器前检查必要的环境变量
+if [ -z "$SPEECH_KEY" ] || [ -z "$SPEECH_REGION" ] || [ -z "$TTS_ACCESS_TOKEN" ]; then
+    echo "❌ 错误: 请确保 SPEECH_KEY、SPEECH_REGION 和 TTS_ACCESS_TOKEN 均已设置"
+    exit 1
+fi
+
 # 启动服务器
 cd "$(dirname "$0")/.."
 # 确保使用当前目录的虚拟环境

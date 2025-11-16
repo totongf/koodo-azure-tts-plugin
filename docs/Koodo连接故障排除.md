@@ -7,12 +7,12 @@
 - **端口监听**：5003 端口正常监听
 - **API响应**：HTTP 200 状态码
 - **语音合成**：Azure TTS 连接正常
-- **访问令牌**：your-api-token（匹配）
+- **访问令牌**：与 `TTS_ACCESS_TOKEN` 相同（匹配）
 
 ### ✅ 插件配置
-- **插件文件**：`plugins/azure_tts_plugin.json` 
+- **插件文件**：`plugins/koodo_azure_tts_plugin.json` 
 - **服务器URL**：`http://127.0.0.1:5003/api/tts`
-- **访问令牌**：your-api-token
+- **访问令牌**：与服务端一致的令牌
 - **语音列表**：xiaoxiao, xiaoyi, yunxi 等 14 个中文语音
 
 ## 🔍 可能的问题
@@ -31,7 +31,11 @@
 
 ### 4. 项目文件路径变更
 - **症状**：Koodo 找不到插件文件
-- **解决**：确保 `plugins/` 目录可访问
+- **解决**：确保 `plugins/` 目录可访问，并指向 `koodo_azure_tts_plugin.json`
+
+### 5. 访问令牌未同步
+- **症状**：服务器日志出现“无效访问令牌”
+- **解决**：把插件 JSON 中每个语音的 `token` 字段替换为 `TTS_ACCESS_TOKEN`
 
 ## 🛠️ 解决步骤
 
@@ -65,7 +69,7 @@ curl http://localhost:5003/health
 
 # 2. 测试完整TTS API
 curl -s -o /dev/null -w "状态码: %{http_code}, 响应时间: %{time_total}s\n" \
-  "http://127.0.0.1:5003/api/tts?text=测试&voice=xiaoxiao&e=1.0&token=your-api-token"
+  "http://127.0.0.1:5003/api/tts?text=测试&voice=xiaoxiao&e=1.0&token=your-secure-token"
 
 # 3. 检查日志
 tail -f logs/server.log
@@ -82,7 +86,7 @@ tail -f logs/server.log
 ## 🆘 如果仍有问题
 
 1. **检查 Koodo 版本**：确保支持语音插件功能
-2. **检查插件文件**：`plugins/azure_tts_plugin.json` 是否存在且格式正确
+2. **检查插件文件**：`plugins/koodo_azure_tts_plugin.json` 是否存在且格式正确
 3. **检查网络连接**：Koodo 是否允许访问本地服务器
 4. **检查日志**：查看 `logs/server.log` 中是否有错误信息
 

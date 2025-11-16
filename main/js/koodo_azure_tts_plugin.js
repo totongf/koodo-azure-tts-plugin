@@ -52,7 +52,11 @@ const getTTSAudio = async (text, rate, config) => {
     // 获取配置参数
     const url = config.url || "http://127.0.0.1:5003/api/tts";
     const voice = config.voice || "xiaoxiao";
-    const token = config.token || "azure-tts-2024";
+    const token = config.token;
+
+    if (!token) {
+        throw new Error("未配置 token，无法调用 Azure TTS 服务。请在插件 JSON 中填写与服务器一致的 token。");
+    }
     
     // 构建请求参数
     const params = {

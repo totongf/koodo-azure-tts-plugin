@@ -7,8 +7,8 @@ koodo-azure-tts-plugin 是一个兼容 [Koodo Reader](https://github.com/troyegu
 - 🎙️ **多语言支持**：支持多种语言和语音风格
 - ⚡ **实时合成**：快速生成语音文件
 - 📝 **文本处理**：支持复杂文本格式
-- 🎵 **音频质量**：提供高保真音频输出
-- 📁 **多格式输出**：支持 WAV/MP3 等格式
+- 🎵 **音频质量**：提供高保真 WAV 输出
+- 📁 **单格式输出**：当前版本输出 `wav` 文件（16kHz/16bit/Mono）
 - 🔌 **Koodo 兼容**：无缝集成 Koodo 语音插件系统
   - 测试版本：2.2.1
 
@@ -56,8 +56,8 @@ uv pip install -r requirements.txt
 - `PORT`：服务器监听端口，默认：`5003`
 - `DEBUG`：是否开启调试模式，默认：`False`
 
-#### 安全配置（可选）
-- `API_TOKEN`：API 访问令牌（用于身份验证），默认：`your-api-token`
+#### 安全配置（必须）
+- `TTS_ACCESS_TOKEN`：API 访问令牌（启动服务前必须配置）
 
 ### 环境变量设置方法
 
@@ -65,14 +65,14 @@ uv pip install -r requirements.txt
 ```bash
 export SPEECH_KEY=your_azure_speech_key_here
 export SPEECH_REGION=eastasia
-export API_TOKEN=your-api-token
+export TTS_ACCESS_TOKEN=your-secure-token
 ```
 
 **Windows**：
 ```cmd
 set SPEECH_KEY=your_azure_speech_key_here
 set SPEECH_REGION=eastasia
-set API_TOKEN=your-api-token
+set TTS_ACCESS_TOKEN=your-secure-token
 ```
 
 ## 使用方法
@@ -87,15 +87,17 @@ set API_TOKEN=your-api-token
 4. 在弹出的对话框中，粘贴 `plugins/koodo_azure_tts_plugin.json` 文件中的 JSON 配置代码
 5. 点击「保存」按钮，完成插件安装
 
+> ⚠️  将 JSON 中的 `token` 字段替换为你在服务器上配置的 `TTS_ACCESS_TOKEN`，否则请求会被拒绝。
+
 JSON 配置文件路径：[plugins/koodo_azure_tts_plugin.json](plugins/koodo_azure_tts_plugin.json)
 
 ### JavaScript 插件（Koodo 集成）
 
 ```javascript
-const azureTTSPLugin = require('./main/js/azure_tts_plugin');
+const azureTTSPlugin = require('./main/js/koodo_azure_tts_plugin');
 
 // 调用语音合成
-const audioPath = await azureTTSPLugin.getAudioPath(
+const audioPath = await azureTTSPlugin.getAudioPath(
   "你好，这是 Azure TTS 语音合成示例", // 文本内容
   1.0, // 语速（0.5-2.0）
   "./output", // 输出目录
@@ -108,24 +110,21 @@ console.log("生成的音频文件路径：", audioPath);
 ### Python 服务
 
 ```bash
-# 启动服务
-python main/python/app.py
+# 使用脚本（自动检测环境变量和虚拟环境）
+./scripts/start_service.sh
 
-# 或使用脚本
-./scripts/start_server.sh
+# 或直接启动（需手动激活虚拟环境并配置变量）
+uv run python main/python/app.py
 ```
 
 服务启动后，可通过 API 调用：
 
 ```bash
-curl -X POST http://localhost:5003/tts \
-  -H "Authorization: Bearer your-api-token" \
-  -H "Content-Type: application/json" \
-  -d '{
-    "text": "你好，这是 Azure TTS 语音合成示例",
-    "rate": 1.0
-  }'
+curl "http://localhost:5003/api/tts?text=你好，这是 Azure TTS 语音合成示例&voice=xiaoxiao&e=0&token=your-secure-token" \
+  --output speech.wav
 ```
+
+> 接口仅支持 `GET /api/tts`，`token` 通过查询参数传入并必须与服务器的 `TTS_ACCESS_TOKEN` 匹配。
 
 ## 项目结构
 
@@ -133,7 +132,6 @@ curl -X POST http://localhost:5003/tts \
 ├── audio/               # 音频文件输出目录
 ├── config/              # 配置文件目录
 ├── docs/                # 文档目录
-├── examples/            # 示例配置
 ├── logs/                # 日志文件
 ├── main/                # 核心代码
 │   ├── js/             # JavaScript 插件实现

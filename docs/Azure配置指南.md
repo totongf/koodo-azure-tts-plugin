@@ -4,8 +4,8 @@
 
 ### ✅ 访问令牌匹配问题
 - **问题**：Flask 服务器默认令牌与 JavaScript 插件令牌不匹配
-- **解决**：统一使用 `your-api-token` 作为访问令牌
-- **位置**：`main/python/app.py:24`
+- **解决**：改为必须通过环境变量 `TTS_ACCESS_TOKEN` 注入访问令牌
+- **位置**：`main/python/app.py`
 
 ### ✅ 日志路径规范化
 - **问题**：日志文件存放在 `main/logs/` 而不是项目规范要求的 `/logs`
@@ -13,7 +13,7 @@
 - **位置**：`main/python/app.py:8-11`
 
 ### ✅ 服务启动脚本
-- **新增**：`start_service.sh` 启动脚本
+- **新增**：`scripts/start_service.sh` 启动脚本
 - **功能**：自动加载环境变量、激活虚拟环境、启动服务
 
 ## 📋 当前状态
@@ -24,13 +24,14 @@
 
 ### ⚠️ 仍需配置
 - Azure TTS 环境变量（`SPEECH_KEY` 和 `SPEECH_REGION`）
+- API 访问令牌（`TTS_ACCESS_TOKEN`）
 
 ## 🚀 使用方法
 
 ### 1. 快速启动
 ```bash
 # 使用提供的启动脚本
-./start_service.sh
+./scripts/start_service.sh
 ```
 
 ### 2. 手动启动
@@ -67,12 +68,14 @@ python app.py
 ```bash
 export SPEECH_KEY="your_actual_key"
 export SPEECH_REGION="your_actual_region"
+export TTS_ACCESS_TOKEN="your_secure_token"
 ```
 
 **Windows**：
 ```cmd
 set SPEECH_KEY="your_actual_key"
 set SPEECH_REGION="your_actual_region"
+set TTS_ACCESS_TOKEN="your_secure_token"
 ```
 
 ## 🧪 验证配置
@@ -83,42 +86,28 @@ set SPEECH_REGION="your_actual_region"
 curl http://localhost:5003/health
 
 # 测试语音合成
-curl "http://localhost:5003/api/tts?text=测试&voice=xiaoxiao&token=your-api-token"
+curl "http://localhost:5003/api/tts?text=测试&voice=xiaoxiao&token=your-secure-token"
 ```
 
 ### 4. 支持的语音
 
 项目支持以下中文语音：
-- **女声**: xiaoxiao, xiaoyi, yunxi, yunxia, xiaochen, xiaohan, xiaomeng, xiaomo, xiaoxuan, xiaoyan
-- **男声**: yaoyao, yunyang, yunye
-- **童声**: xiaoyi, xiaochen, xiaomeng
+- **女声**: xiaoxiao, xiaoyi, yunxi, yunxia, xiaochen, xiaohan, xiaomeng, xiaomo, xiaoxuan, xiaoyan, yaoyao
+- **男声**: yunyang, yunye
+- **童声**: yundeng
 
 ### 5. 速度参数映射说明
 
 **⚠️ 重要：Koodo 速度参数与 Azure TTS 语速的映射关系**
 
-Koodo 中的速度参数需要转换为 Azure TTS 的语速参数，映射公式如下：
-
-```
-Azure语速 = 1.0 + (Koodo速度参数 / 100)
-```
-
-**具体映射关系：**
-- `Koodo=0` → `Azure=1.0` (基准语速，100%)
-- `Koodo=25` → `Azure=1.25` (25%加快语速)
-- `Koodo=-25` → `Azure=0.75` (25%减慢语速)
-- `Koodo=50` → `Azure=1.5` (50%加快语速)
-- `Koodo=-50` → `Azure=0.5` (50%减慢语速)
-
-**参数范围：**
-- Koodo 速度参数：-100 到 100
-- Azure 语速参数：0.0 到 2.0
-- 基准速度：Koodo=0 对应 Azure=1.0
+插件目前支持两组速度输入：
+1. `-50、-25、0、25、50、75、100`（Koodo 传统枚举），按照 `Azure = 1.0 + (Koodo / 100)` 转换，并在 0.5~2.0 之间截断。
+2. `0.5、0.75、1、1.25、1.5、1.75、2`（Koodo 新枚举），直接作为 Azure 语速使用，同样限制在 0.5~2.0 范围。
 
 **注意事项：**
-- `Koodo=0` 表示基准语速，不是停止播放
-- 正值表示比标准语速快，负值表示比标准语速慢
-- Azure TTS 服务会自动处理超出范围的速度值
+- 任何未在枚举中的值都会回退到 1.0 倍速。
+- Azure TTS 最低支持 0.5 倍速、最高支持 2.0 倍速；更低或更高的值会被截断。
+- 请求日志仅输出语速信息和文本长度，避免泄露具体文本内容。
 
 ## 注意事项
 

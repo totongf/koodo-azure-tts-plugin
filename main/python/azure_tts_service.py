@@ -5,7 +5,6 @@ Azure TTS 服务类
 import os
 import logging
 import azure.cognitiveservices.speech as speechsdk
-from io import BytesIO
 
 
 class AzureTTSService:
@@ -43,8 +42,8 @@ class AzureTTSService:
             'xiaomo': 'zh-CN-XiaomoNeural',
             'xiaoxuan': 'zh-CN-XiaoxuanNeural',
             'xiaoyan': 'zh-CN-XiaoyanNeural',
-            # 男声
             'yaoyao': 'zh-CN-YaoyaoNeural',
+            # 男声
             'yunyang': 'zh-CN-YunyangNeural',
             'yunye': 'zh-CN-YunyeNeural',
             # 童声
@@ -113,25 +112,27 @@ class AzureTTSService:
             </speak>
             """
 
-            # 记录模拟的curl命令，方便调试
-            azure_endpoint = f"https://{self.speech_region}.tts.speech.microsoft.com/cognitiveservices/v1"
-            logging.info(f"Azure TTS 请求调试信息:")
-            logging.info(f"Endpoint: {azure_endpoint}")
-            logging.info(f"语音名称: {voice_name}")
-            logging.info(f"语速因子: {rate:.2f}")
-            logging.info(f"SSML 内容: {ssml.strip()}")
-            logging.info(f"模拟 curl 命令 (替换 {{SPEECH_KEY}} 为实际密钥):")
-            logging.info(f"curl -X POST \"{azure_endpoint}\" \\")
-            logging.info(f"  -H \"Ocp-Apim-Subscription-Key: {{SPEECH_KEY}}\" \\")
-            logging.info(f"  -H \"Content-Type: application/ssml+xml\" \\")
-            logging.info(f"  -H \"X-Microsoft-OutputFormat: riff-16khz-16bit-mono-pcm\" \\")
-            logging.info(f"  --data-ascii '{ssml.strip()}'")
+            text_length = len(text)
+            azure_endpoint = (
+                f"https://{self.speech_region}.tts.speech.microsoft.com/cognitiveservices/v1"
+            )
+            logging.info(
+                "Azure TTS 请求: voice=%s, rate=%.2f, 文本长度=%d",
+                voice_name,
+                rate,
+                text_length,
+            )
+            logging.debug("Azure Endpoint: %s", azure_endpoint)
 
             # 执行语音合成
             result = synthesizer.speak_ssml_async(ssml).get()
             
             if result.reason == speechsdk.ResultReason.SynthesizingAudioCompleted:
-                logging.info(f"语音合成成功: {text[:50]}...")
+                logging.info(
+                    "语音合成成功: voice=%s, 文本长度=%d",
+                    voice_name,
+                    text_length,
+                )
                 return result.audio_data
             elif result.reason == speechsdk.ResultReason.Canceled:
                 cancellation_details = speechsdk.SpeechSynthesisCancellationDetails.from_result(result)
