@@ -169,7 +169,7 @@ node scripts/compress_plugin.js
 
 ## 许可证
 
-ISC
+MIT
 
 ## 贡献
 
