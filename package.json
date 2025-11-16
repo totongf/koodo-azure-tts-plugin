@@ -1,0 +1,17 @@
+{
+  "name": "koodo-azure-tts-plugin",
+  "version": "1.0.0",
+  "description": "兼容 Koodo 语音插件系统的 Azure 语音合成插件",
+  "main": "main/js/koodo_azure_tts_plugin.js",
+  "directories": {
+    "doc": "docs",
+    "example": "examples",
+    "test": "test"
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": ["koodo", "azure-tts", "speech-synthesis", "plugin"],
+  "author": "",
+  "license": "ISC"
+}

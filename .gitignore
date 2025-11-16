@@ -1,0 +1,31 @@
+# Dependencies
+node_modules/
+.venv/
+.env
+
+# Logs
+logs/
+*.log
+
+# Audio files
+audio/
+*.wav
+*.mp3
+
+# IDE
+.idea/
+.vscode/
+*.swp
+*.swo
+
+# Python
+__pycache__/
+*.pyc
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Build
+dist/
+build/

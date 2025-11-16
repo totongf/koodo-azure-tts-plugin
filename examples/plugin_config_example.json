@@ -1,0 +1,44 @@
+{
+  "identifier": "azure-tts-voice-plugin",
+  "type": "voice",
+  "displayName": "Azure TTS",
+  "icon": "speaker",
+  "version": "1.0.0",
+  "config": {},
+  "voiceList": [
+    {
+      "name": "xiaoxiao",
+      "gender": "female",
+      "locale": "zh-CN",
+      "displayName": "Xiaoxiao (Azure)",
+      "plugin": "azure-tts-voice-plugin",
+      "config": {
+        "url": "http://127.0.0.1:5003/api/tts",
+        "voice": "xiaoxiao",
+        "token": "你的访问令牌"
+      }
+    }
+  ],
+  "scriptSHA256": "3ca06cfe2601ee84a2e48d07bbd39638d64824860e17e1c2e16013e1b48b3214",
+  "script": "压缩后的脚本内容"
+}
+
+/*
+配置说明：
+
+1. identifier: 插件唯一标识符
+2. url: Azure TTS 服务器地址（默认端口 5003）
+3. voice: 支持的语音类型 (xiaoxiao, yaoyao, yunyang)
+4. token: 访问令牌（需要在服务器端设置相同的令牌）
+5. scriptSHA256: 脚本的 SHA256 哈希值（用于验证脚本完整性）
+
+安装步骤：
+1. 将此配置导入 Koodo
+2. 确保 Azure TTS 服务器正在运行
+3. 修改 token 为实际的访问令牌
+4. 测试语音合成功能
+
+服务器启动：
+export TTS_ACCESS_TOKEN=你的访问令牌
+python scripts/start_server.py
+*/
