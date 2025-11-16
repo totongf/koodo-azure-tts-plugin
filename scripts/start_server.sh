@@ -1,11 +1,12 @@
 #!/bin/bash
 # Azure TTS 服务器启动脚本
 
-# 设置环境变量
-export SPEECH_KEY=***REMOVED***
-export SPEECH_REGION=eastasia
-export TTS_ACCESS_TOKEN=your-api-token
-export PORT=5003
+# 注意：不再硬编码环境变量，请在系统或项目配置中设置
+# 需要设置的环境变量：
+# - SPEECH_KEY: Azure Speech 服务密钥
+# - SPEECH_REGION: Azure Speech 服务区域
+# - TTS_ACCESS_TOKEN: API 访问令牌
+# - PORT: 服务器端口（默认 5003）
 
 # 启动服务器
 cd "$(dirname "$0")/.."
